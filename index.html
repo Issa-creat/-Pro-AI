@@ -9,8 +9,8 @@
             font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
             direction: rtl;
             text-align: right;
-            background: linear-gradient(to bottom, #000000, #333333);
-            color: #ffffff;
+            background: linear-gradient(to bottom, #000000, #333333); /* تدرج من الأسود إلى الأسود الداكن */
+            color: #ffffff; /* لون النص */
             margin: 0;
             padding: 0;
         }
@@ -18,31 +18,31 @@
             max-width: 600px;
             margin: auto;
             padding: 20px;
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.1); /* لون خلفية الحاوية مع شفافية */
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             border-radius: 8px;
             margin-top: 20px;
         }
         h1 {
-            color: #ffffff;
+            color: #ffffff; /* لون العنوان */
             text-align: center;
             margin-bottom: 20px;
         }
         pre {
-            font-size: 14px;
-            line-height: 1.6;
-            white-space: pre-wrap;
-            background-color: rgba(31, 31, 31, 0.8);
-            color: #ffffff;
+            font-size: 14px; /* حجم الخط */
+            line-height: 1.6; /* تباعد السطور */
+            white-space: pre-wrap; /* تعدد السطور */
+            background-color: rgba(31, 31, 31, 0.8); /* لون خلفية المربع النصي بشفافية */
+            color: #dfffff; /* لون النص داخل المربع النصي */
             padding: 10px;
             border-radius: 4px;
             margin-bottom: 10px;
-            border: 1px solid #666666;
-            width: calc(100% - 22px);
-            height: 200px;
-            overflow-y: auto;
-            cursor: text;
-            resize: vertical;
+            border: 1px solid #666666; /* لون حدود المربع النصي */
+            width: calc(100% - 22px); /* عرض المربع النصي */
+            height: 200px; /* ارتفاع المربع النصي */
+            overflow-y: auto; /* التمرير العمودي */
+            cursor: text; /* تغيير شكل المؤشر عند التحريك إلى نص */
+            resize: vertical; /* السماح بتغيير حجم المربع النصي عموديا */
         }
         button {
             display: block;
@@ -66,7 +66,7 @@
         }
         #total {
             font-weight: bold;
-            color: #4CAF50;
+            color: #4CAF50; /* لون النص */
         }
     </style>
 </head>
@@ -80,12 +80,18 @@
         <p id="result">مجموع الأرقام في القائمة: <span id="total"></span> ريال</p>
     </div>
     <script>
-        document.getElementById('textForm').addEventListener('submit', function(event) {
+        document.getElementById('textForm').addEventListener('submit', async function(event) {
             event.preventDefault();
             const text = document.getElementById('inputText').textContent;
-            const numbers = text.match(/\d+(\.\d+)?/g);
-            const total = numbers ? numbers.reduce((sum, num) => sum + parseFloat(num), 0) : 0;
-            document.getElementById('total').textContent = total + ' ريال';
+            const response = await fetch('http://127.0.0.1:5000/api/calculate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text: text })
+            });
+            const data = await response.json();
+            document.getElementById('total').textContent = data.total_amount + ' ريال';
         });
 
         function clearPlaceholder() {
