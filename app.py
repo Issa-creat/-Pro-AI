@@ -1,26 +1,21 @@
 from flask import Flask, request, jsonify
-import spacy
+from transformers import pipeline
 
 app = Flask(__name__)
 
-# تحميل نموذج اللغة العربية
-nlp = spacy.load("ar_core_news_sm")
+# تحميل نموذج جاهز لتحليل النصوص
+nlp = pipeline("ner", model="dslim/bert-base-NER")
 
 @app.route('/api/calculate', methods=['POST'])
 def calculate():
     data = request.get_json()
     text = data['text']
     
-    # تحليل النص باستخدام spaCy
-    doc = nlp(text)
-    
-    total_amount = 0
+    # تحليل النص باستخدام النموذج
+    result = nlp(text)
     
     # استخراج الأرقام بعد كلمة "ب" أو "ريال"
-    for token in doc:
-        if token.text == 'ب' or token.text == 'ريال':
-            if token.nbor().like_num:
-                total_amount += int(token.nbor().text)
+    total_amount = sum(int(entity['word']) for entity in result if entity['entity'] == 'MONEY')
     
     return jsonify({'total_amount': total_amount})
 
