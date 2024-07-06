@@ -80,28 +80,11 @@
         <p id="result">مجموع الأرقام في القائمة: <span id="total"></span> ريال</p>
     </div>
     <script>
-        async function calculateSumWithAI(text) {
-            const apiKey = 'sk-proj-fgbYWrbjCV0BrjNoI1HcT3BlbkFJECmiD7F81KMU0viC1ZuI';
-            const response = await fetch('https://api.openai.com/v1/completions', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
-                },
-                body: JSON.stringify({
-                    model: "text-davinci-003",
-                    prompt: `احسب مجموع الأرقام في النص التالي: ${text}`,
-                    max_tokens: 50
-                })
-            });
-            const data = await response.json();
-            return data.choices[0].text.trim();
-        }
-
-        document.getElementById('textForm').addEventListener('submit', async function(event) {
+        document.getElementById('textForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const text = document.getElementById('inputText').textContent;
-            const total = await calculateSumWithAI(text);
+            const numbers = text.match(/\d+(\.\d+)?/g);
+            const total = numbers ? numbers.reduce((sum, num) => sum + parseFloat(num), 0) : 0;
             document.getElementById('total').textContent = total + ' ريال';
         });
 
